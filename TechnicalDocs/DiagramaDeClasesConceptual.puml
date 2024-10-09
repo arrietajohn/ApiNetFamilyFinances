@@ -1,0 +1,113 @@
+@startuml
+' Model de clases conceptual
+
+class Role {
+    - RolId: int
+    - Name: String
+    - Description: String
+}
+
+class User {
+    - UserName: String
+    - Password: String
+    - JwtToken: String
+    - CreateOnDate: Date
+    - Role: Role
+}
+
+class Family {
+    - FamilyId: int
+    - Name: String
+    - Address: String
+    - PhoneNumber: String
+}
+
+class Member {
+    - MemberId: int
+    - FirstName: String
+    - LastName: String
+    - Gender: String
+    - PhoneNumber: String
+    - Position: String
+    - Occupation: String
+    - CreateOnDate: Date
+    - User: User
+    - Family: Family
+}
+
+class IncomeSource {
+    - IncomeSourceId: int
+    - Name: String
+    - Description: String
+    - Icon: String
+    - CreateOnDate: Date
+}
+
+class Income {
+    - IncomeId: int
+    - Date: Date
+    - Name: String
+    - Amount: Decimal
+    - Details: String
+    - CreateOnDate: Date
+    - Member: Member
+    - IncomeSource: IncomeSource
+}
+
+class ExpenseCategory {
+    - ExpenseCategoryId: int
+    - Name: String
+    - Description: String
+    - Icon: String
+    - CreateOnDate: Date
+}
+
+class Expense {
+    - ExpenseId: int
+    - Date: Date
+    - Name: String
+    - Amount: Decimal
+    - Details: String
+    - CreateOnDate: Date
+    - Member: Member
+    - ExpenseCategory: ExpenseCategory
+}
+
+class SavingsBag {
+    - SavingBagId: int
+    - Name: String
+    - StartDate: Date
+    - EndDate: Date
+    - IdealAmount: Decimal
+    - Purpose: String
+    - Status: String
+    - CreationDate: Date
+    - Family: Family
+}
+
+class Contribution {
+    - Id: int
+    - Amount: Decimal
+    - DateContributed: Date
+    - SavingsBag: SavingsBag
+    - Member: Member
+    - Income: Income
+    - Expense: Expense
+}
+
+' Definir las relaciones entre clases (con cardinalidad y nombres de relaciones)
+
+User <|-- Member : Es un
+Member "*" -- "1" Family : Pertenecer
+Income "*" -- "1" Member : Generar
+Income "*" -- "1" IncomeSource : Originar
+Expense "*" -- "1" Member : Realizar
+Expense "*" -- "1" ExpenseCategory : Categorizar
+SavingsBag "*" -- "1" Family : Ser parte de
+Contribution "*" -- "1" SavingsBag : Aportar
+Contribution "*" -- "1" Member : Hacer
+Contribution "*" -- "1" Income : Relacionar con
+Contribution "*" -- "1" Expense : Asociar con
+User "1" -- "1" Role : Tener
+
+@enduml
