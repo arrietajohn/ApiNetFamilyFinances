@@ -1,0 +1,109 @@
+Table Roles {
+    RolId INT [pk, increment]
+    Name NVARCHAR(50)
+    Description NVARCHAR(250)
+}
+
+Table Users {
+    UserName VARCHAR(30) [pk, not null, unique]
+    Password NVARCHAR(500)
+    JwtToken NVARCHAR(1000)
+    RolId INT [not null]  
+    CreateOnDate DATETIME [default: 'GETDATE()']
+}
+
+Table Families {
+    FamilyId INT [pk, increment]
+    Name VARCHAR(100)
+    Address VARCHAR(250)
+    PhoneNumber VARCHAR(20)
+}
+
+Table Members {
+    MemberId INT [pk, increment]
+    FirtsName VARCHAR(50)
+    LastName VARCHAR(70)
+    Gender VARCHAR(20)
+    PhoneNumber VARCHAR(20)
+    Position VARCHAR(20)
+    Occupation VARCHAR(50)
+    CreateOnDate DATETIME [default: 'GETDATE()']
+    UserName VARCHAR(30) [unique] 
+    FamilyId INT [not null]  
+}
+
+Table IncomeSources {
+    IncomeSourceId INT [pk, increment]
+    Name VARCHAR(50)
+    Description NVARCHAR(500)
+    Icon VARCHAR(10) [default: 'IncomeSource.png']
+    CreateOnDate DATETIME [default: 'GETDATE()']
+}
+
+Table Incomes {
+    IncomeId INT [pk, increment]
+    Date DATETIME
+    Name VARCHAR(100)
+    Amount DECIMAL(18, 2)
+    Datails NVARCHAR(250)
+    CreateOnDate DATETIME [default: 'GETDATE()']
+    MemberId INT [not null]  
+    IncomeSourceId INT [not null]  
+}
+
+Table ExpenseCategories {
+    ExpenseCategoryId INT [pk, increment]
+    Name VARCHAR(50)
+    Description NVARCHAR(500)
+    Icon VARCHAR(10) [default: 'Category.png']
+    CreateOnDate DATETIME [default: 'GETDATE()']
+}
+
+Table Expenses {
+    ExpenseId INT [pk, increment]
+    Date DATETIME
+    Name VARCHAR(100)
+    Amount DECIMAL(18, 2)
+    Datails NVARCHAR(250)
+    CreateOnDate DATETIME [default: 'GETDATE()']
+    MemberId INT [not null]  
+    ExpenseCategoryId INT [not null]  
+}
+
+Table SavingsBags {
+    SavingBagId INT [pk, increment]
+    Name NVARCHAR(100)
+    StartDate DATE
+    EndDate DATE
+    IdealAmount DECIMAL(18, 2)
+    Purpose NVARCHAR(255)
+    Status NVARCHAR(50)
+    CreationDate DATETIME [default: 'GETDATE()']
+    FamilyId INT [not null]  
+}
+
+Table Contributions {
+    Id INT [pk, increment]
+    SavingsBagId INT [not null]  
+    MemberId INT [not null]  
+    IncomeId INT [not null]  
+    ExpenseId INT  
+    Amount DECIMAL(18, 2)
+    DateContributed DATE
+}
+
+
+
+Ref: Users.RolId > Roles.RolId
+Ref: Members.UserName > Users.UserName
+Ref: Members.FamilyId > Families.FamilyId
+Ref: Incomes.MemberId > Members.MemberId
+Ref: Incomes.IncomeSourceId > IncomeSources.IncomeSourceId
+Ref: Expenses.MemberId > Members.MemberId
+Ref: Expenses.ExpenseCategoryId > ExpenseCategories.ExpenseCategoryId
+Ref: SavingsBags.FamilyId > Families.FamilyId
+Ref: Contributions.SavingsBagId > SavingsBags.SavingBagId
+Ref: Contributions.MemberId > Incomes.MemberId
+Ref: Contributions.IncomeId > Incomes.IncomeId
+Ref: Contributions.MemberId > Expenses.MemberId
+Ref: Contributions.ExpenseId > Expenses.ExpenseId
