@@ -51,4 +51,3 @@ public class Expense
         IsActive = true;
     }
 }
-}
