@@ -1,4 +1,5 @@
-﻿-- Crear la base de datos
+﻿La BD
+-- Crear la base de datos
 CREATE DATABASE FamilyFinancesDb;
 USE FamilyFinancesDb;
 
@@ -6,7 +7,9 @@ USE FamilyFinancesDb;
 CREATE TABLE [dbo].[Roles] (
     [RolId] INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
     [Name] NVARCHAR(50) NOT NULL,
-    [Description] NVARCHAR(250) NULL
+    [Description] NVARCHAR(250) NULL,
+    [CreationDate] DATETIME NULL DEFAULT GETDATE(),
+    [IsActive] BIT NOT NULL DEFAULT 1
 );
 
 -- Crear la tabla Users
@@ -15,9 +18,9 @@ CREATE TABLE [dbo].[Users] (
     [Password] NVARCHAR(500) NULL,
     [Email] VARCHAR(70) NOT NULL UNIQUE,
     [JwtToken] NVARCHAR(500) NULL,
-    [RolId] INT NOT NULL,
-    [CreateOnDate] DATETIME NULL DEFAULT GETDATE(),
-    [IsActive] BIT NOT NULL DEFAULT 1
+    [CreationDate] DATETIME NULL DEFAULT GETDATE(),
+    [IsActive] BIT NOT NULL DEFAULT 1,
+    [RolId] INT NOT NULL
 );
 
 -- Crear la tabla Families
@@ -26,6 +29,7 @@ CREATE TABLE [dbo].[Families] (
     [Name] VARCHAR(100) NOT NULL,
     [Address] VARCHAR(250) NULL,
     [PhoneNumber] VARCHAR(20) NULL,
+    [CreationDate] DATETIME DEFAULT GETDATE(),
     [IsActive] BIT NOT NULL DEFAULT 1
 );
 
@@ -38,9 +42,9 @@ CREATE TABLE [dbo].[Members] (
     [PhoneNumber] VARCHAR(20) NULL,
     [Position] VARCHAR(20) NULL,
     [Occupation] VARCHAR(50) NULL,
-    [CreateOnDate] DATETIME DEFAULT GETDATE(),
+    [CreationDate] DATETIME DEFAULT GETDATE(),
     [IsActive] BIT NOT NULL DEFAULT 1,
-    [UserName] VARCHAR(30) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL UNIQUE,
+    [Userid] VARCHAR(30) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL UNIQUE,
     [FamilyId] INT NOT NULL
 );
 
@@ -50,7 +54,7 @@ CREATE TABLE [dbo].[IncomeSources] (
     [Name] VARCHAR(50) NOT NULL,
     [Description] NVARCHAR(500) NOT NULL,
     [Icon] VARCHAR(10) NULL DEFAULT 'IncomeSource.png',
-    [CreateOnDate] DATETIME NULL DEFAULT GETDATE(),
+    [CreationDate] DATETIME NULL DEFAULT GETDATE(),
     [IsActive] BIT NOT NULL DEFAULT 1
 );
 
@@ -61,10 +65,11 @@ CREATE TABLE [dbo].[Incomes] (
     [Name] VARCHAR(100) NOT NULL,
     [Amount] DECIMAL(18,2) NOT NULL,
     [Details] NVARCHAR(250) NULL,
-    [CreateOnDate] DATETIME NULL DEFAULT GETDATE(),
+    [CreationDate] DATETIME NULL DEFAULT GETDATE(),
+    [IsActive] BIT NOT NULL DEFAULT 1,
     [MemberId] INT NOT NULL,
-    [IncomeSourceId] INT NOT NULL,
-    [IsActive] BIT NOT NULL DEFAULT 1
+    [IncomeSourceId] INT NOT NULL
+   
 );
 
 -- Crear la tabla ExpenseCategories
@@ -73,7 +78,7 @@ CREATE TABLE [dbo].[ExpenseCategories] (
     [Name] VARCHAR(50) NOT NULL,
     [Description] NVARCHAR(500) NOT NULL,
     [Icon] VARCHAR(10) NULL DEFAULT 'Category.png',
-    [CreateOnDate] DATETIME NULL DEFAULT GETDATE(),
+    [CreationDate] DATETIME NULL DEFAULT GETDATE(),
     [IsActive] BIT NOT NULL DEFAULT 1
 );
 
@@ -84,10 +89,11 @@ CREATE TABLE [dbo].[Expenses] (
     [Name] VARCHAR(100) NOT NULL,
     [Amount] DECIMAL(18,2) NOT NULL,
     [Details] NVARCHAR(250) NULL,
-    [CreateOnDate] DATETIME NULL DEFAULT GETDATE(),
+    [CreationDate] DATETIME NULL DEFAULT GETDATE(),
+    [IsActive] BIT NOT NULL DEFAULT 1,
     [MemberId] INT NOT NULL,
-    [ExpenseCategoryId] INT NOT NULL,
-    [IsActive] BIT NOT NULL DEFAULT 1
+    [ExpenseCategoryId] INT NOT NULL
+
 );
 
 -- Crear la tabla SavingsBags
@@ -99,20 +105,23 @@ CREATE TABLE [dbo].[SavingsBags] (
     [IdealAmount] DECIMAL(18, 2) NOT NULL,
     [Purpose] NVARCHAR(255),
     [Status] NVARCHAR(50),
-    [CreationDate] DATETIME DEFAULT GETDATE(),
-    [FamilyId] INT NOT NULL,
-    [IsActive] BIT NOT NULL DEFAULT 1
+    [CreationDate] DATETIME NULL DEFAULT GETDATE(),
+    [IsActive] BIT NOT NULL DEFAULT 1,
+    [FamilyId] INT NOT NULL
 );
 
 -- Crear la tabla Contributions
 CREATE TABLE [dbo].[Contributions] (
-    [Id] INT IDENTITY(1,1) PRIMARY KEY,
+    [Id] INT IDENTITY(1,1) PRIMARY KEY,    
+    [Amount] DECIMAL(18, 2) NOT NULL,  
+    [DateContributed] DATE NOT NULL,
+    [CreationDate] DATETIME NULL DEFAULT GETDATE(),
+    [IsActive] BIT NOT NULL DEFAULT 1,
     [SavingsBagId] INT NOT NULL,
     [MemberId] INT NOT NULL,
     [IncomeId] INT NOT NULL,
     [ExpenseId] INT NULL,
-    [Amount] DECIMAL(18, 2) NOT NULL,
-    [DateContributed] DATE NOT NULL
+  
 );
 
 -- Crear la clave foránea entre Users y Roles
@@ -122,7 +131,7 @@ REFERENCES Roles(RolId);
 
 -- Crear la clave foránea opcional entre Members y Users
 ALTER TABLE Members
-ADD CONSTRAINT FK_Members_Users FOREIGN KEY (UserName)
+ADD CONSTRAINT FK_Members_Users FOREIGN KEY (UserId)
 REFERENCES Users(UserName);
 
 -- Crear la clave foránea entre Members y Families
