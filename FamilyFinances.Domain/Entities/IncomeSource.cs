@@ -1,32 +1,39 @@
-﻿namespace FamilyFinances.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
 
-public class IncomeSource
+namespace FamilyFinances.Domain.Entities
 {
-    public int IncomeSourceId { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public string Icon { get; set; } = "IncomeSource.png";
-    public DateTime CreatedOn { get; set; } = DateTime.Now;
-    public bool IsActive { get; set; } = true;
-
-    // Relación con Incomes
-    public ICollection<Income> Incomes { get; set; } = new List<Income>();
-
-    // Constructores
-    public IncomeSource() { }
-
-    public IncomeSource(string name, string description)
+    public class IncomeSource
     {
-        Name = name;
-        Description = description;
-    }
+        public int IncomeSourceId { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Icon { get; set; } = "IncomeSource.png";
+        public DateTime CreationDate { get; set; } = DateTime.Now;
+        public bool IsActive { get; set; } = true;
 
-    public IncomeSource(int incomeSourceId, string name, string description, string icon, bool isActive)
-    {
-        IncomeSourceId = incomeSourceId;
-        Name = name;
-        Description = description;
-        Icon = icon;
-        IsActive = isActive;
+        // Relaciones
+        public ICollection<Income> Incomes { get; set; } = new List<Income>();
+
+        // Constructor sin parámetros requerido por EF Core
+        public IncomeSource() { }
+
+        // Constructores con parámetros
+        public IncomeSource(string name)
+        {
+            Name = name ?? throw new ArgumentNullException(nameof(name), "Name es obligatorio.");
+        }
+
+        public IncomeSource(string name, string description)
+            : this(name)
+        {
+            Description = description ?? throw new ArgumentNullException(nameof(description), "Description es obligatoria.");
+        }
+
+        public IncomeSource(string name, string description, string icon)
+            : this(name, description)
+        {
+            Icon = icon;
+        }
     }
 }

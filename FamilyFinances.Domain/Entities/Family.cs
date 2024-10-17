@@ -1,35 +1,30 @@
-﻿namespace FamilyFinances.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
 
-public class Family
+namespace FamilyFinances.Domain.Entities
 {
-    public int FamilyId { get; set; }
-    public string Name { get; set; }
-    public string Address { get; set; }
-    public string PhoneNumber { get; set; }
-    public bool IsActive { get; set; } = true;
-
-    // Relación con Members y SavingsBags
-    public ICollection<Member> Members { get; set; } = new List<Member>();
-    public ICollection<SavingsBag> SavingsBags { get; set; } = new List<SavingsBag>();
-
-    // Constructores
-    public Family() { }
-
-    public Family(string name, string address, string phoneNumber)
+    public class Family
     {
-        Name = name;
-        Address = address;
-        PhoneNumber = phoneNumber;
-        IsActive = true;
-    }
+        public int FamilyId { get; set; }  // Clave primaria
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public string PhoneNumber { get; set; }
+        public DateTime CreationDate { get; set; } = DateTime.Now;
+        public bool IsActive { get; set; } = true;
 
-    public Family(int familyId, string name, string address, string phoneNumber, bool isActive)
-    {
-        FamilyId = familyId;
-        Name = name;
-        Address = address;
-        PhoneNumber = phoneNumber;
-        IsActive = isActive;
+        // Relaciones
+        public ICollection<Member> Members { get; set; } = new List<Member>();
+        public ICollection<SavingsBag> SavingsBags { get; set; } = new List<SavingsBag>();
+
+        // Constructor sin parámetros requerido por EF Core
+        public Family() { }
+
+        // Constructor con parámetros
+        public Family(string name, string address, string phoneNumber)
+        {
+            Name = name ?? throw new ArgumentNullException(nameof(name), "Name es obligatorio.");
+            Address = address;
+            PhoneNumber = phoneNumber;
+        }
     }
 }
-
