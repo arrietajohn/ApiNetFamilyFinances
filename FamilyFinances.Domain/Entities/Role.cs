@@ -1,28 +1,35 @@
-﻿namespace FamilyFinances.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
-public class Role
+namespace FamilyFinances.Domain.Entities
 {
-    public int RoleId { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-
-    // Relación con Users
-    public ICollection<User> Users { get; set; } = new List<User>();
-
-    // Constructores
-    public Role() { }
-
-    public Role(string name, string description)
+    public class Role
     {
-        Name = name;
-        Description = description;
-    }
+        [Column("RolId")]
+        public int RoleId { get; set; }  // Clave primaria
 
-    public Role(int roleId, string name, string description)
-    {
-        RoleId = roleId;
-        Name = name;
-        Description = description;
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public DateTime CreationDate { get; set; } = DateTime.Now;
+        public bool IsActive { get; set; } = true;
+
+        // Relación con Users
+        public ICollection<User> Users { get; set; } = new List<User>();
+
+        // Constructor sin parámetros requerido por EF Core
+        public Role() { }
+
+        // Constructores con parámetros
+        public Role(string name)
+        {
+            Name = name ?? throw new ArgumentNullException(nameof(name), "El nombre es obligatorio.");
+        }
+
+        public Role(string name, string description)
+            : this(name)
+        {
+            Description = description;
+        }
     }
 }
-

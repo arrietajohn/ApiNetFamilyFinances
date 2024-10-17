@@ -3,9 +3,9 @@
 namespace FamilyFinances.Business.Contracts.Repositories;
 public interface IRoleRepository
 {
-    Role GetRoleById(int roleId);
-    IEnumerable<Role> GetAllRoles();
-    void AddRole(Role role);
-    void UpdateRole(Role role);
-    void DeleteRole(int roleId);
+    Task<Role> GetRoleById(int roleId);
+    Task<IEnumerable<Role>> GetAllRoles();
+    Task AddRole(Role role);
+    Task UpdateRole(Role role);
+    Task DeleteRole(int roleId);
 }

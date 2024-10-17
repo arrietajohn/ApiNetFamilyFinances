@@ -1,49 +1,34 @@
-﻿namespace FamilyFinances.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
 
-public class ExpenseCategory
+namespace FamilyFinances.Domain.Entities
 {
-    public int ExpenseCategoryId { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public string Icon { get; set; }
-    public DateTime CreatedOn { get; set; }
-    public bool IsActive { get; set; }
-
-    // Relación con Expenses: Una categoría puede tener muchos gastos
-    public ICollection<Expense> Expenses { get; set; } = new List<Expense>();
-
-    // Constructor por defecto
-    public ExpenseCategory() { }
-
-    // Constructor completo
-    public ExpenseCategory(int expenseCategoryId, string name, string description, string icon, DateTime createdOn, bool isActive)
+    public class ExpenseCategory
     {
-        ExpenseCategoryId = expenseCategoryId;
-        Name = name;
-        Description = description;
-        Icon = icon;
-        CreatedOn = createdOn;
-        IsActive = isActive;
-    }
+        public int ExpenseCategoryId { get; set; }  // Clave primaria
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Icon { get; set; } = "Category.png";
+        public DateTime CreationDate { get; set; } = DateTime.Now;
+        public bool IsActive { get; set; } = true;
 
-    // Constructor sin ExpenseCategoryId y CreatedOn
-    public ExpenseCategory(string name, string description, string icon)
-    {
-        Name = name;
-        Description = description;
-        Icon = icon;
-        CreatedOn = DateTime.Now;
-        IsActive = true;
-    }
+        // Relaciones
+        public ICollection<Expense> Expenses { get; set; } = new List<Expense>();
 
-    // Constructor con valores por defecto para Icon
-    public ExpenseCategory(string name, string description)
-    {
-        Name = name;
-        Description = description;
-        Icon = "Category.png";
-        CreatedOn = DateTime.Now;
-        IsActive = true;
+        // Constructor sin parámetros requerido por EF Core
+        public ExpenseCategory() { }
+
+        // Constructores con parámetros
+        public ExpenseCategory(string name, string description)
+        {
+            Name = name ?? throw new ArgumentNullException(nameof(name), "Name es obligatorio.");
+            Description = description ?? throw new ArgumentNullException(nameof(description), "Description es obligatoria.");
+        }
+
+        public ExpenseCategory(string name, string description, string icon)
+            : this(name, description)
+        {
+            Icon = icon;
+        }
     }
 }
-

@@ -1,53 +1,41 @@
-﻿namespace FamilyFinances.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
 
-public class Expense
+namespace FamilyFinances.Domain.Entities
 {
-    public int ExpenseId { get; set; }
-    public DateTime Date { get; set; }
-    public string Name { get; set; }
-    public decimal Amount { get; set; }
-    public string Details { get; set; }
-    public DateTime CreatedOn { get; set; } = DateTime.Now;
-    public bool IsActive { get; set; } = true;
-
-    // Relación con Member y ExpenseCategory
-    public int MemberId { get; set; }
-    public Member Member { get; set; }
-
-    public int ExpenseCategoryId { get; set; }
-    public ExpenseCategory ExpenseCategory { get; set; }
-
-    // Constructores
-    public Expense() { }
-
-    public Expense(string name, decimal amount, int memberId, int expenseCategoryId)
+    public class Expense
     {
-        Name = name;
-        Amount = amount;
-        MemberId = memberId;
-        ExpenseCategoryId = expenseCategoryId;
-    }
+        public int ExpenseId { get; set; }
+        public DateTime? Date { get; set; }
+        public string Name { get; set; }
+        public decimal Amount { get; set; }
+        public string Details { get; set; }
+        public DateTime CreationDate { get; set; } = DateTime.Now;
+        public bool IsActive { get; set; } = true;
 
-    public Expense(int expenseId, string name, decimal amount, int memberId, int expenseCategoryId, bool isActive)
-    {
-        ExpenseId = expenseId;
-        Name = name;
-        Amount = amount;
-        MemberId = memberId;
-        ExpenseCategoryId = expenseCategoryId;
-        IsActive = isActive;
-    }
+        // Relación con Member
+        public int MemberId { get; set; }
+        public Member Member { get; set; }
 
-    // Constructor sin ExpenseId y CreatedOn
-    public Expense(DateTime date, string name, decimal amount, string details, int memberId, int expenseCategoryId)
-    {
-        Date = date;
-        Name = name;
-        Amount = amount;
-        Details = details;
-        MemberId = memberId;
-        ExpenseCategoryId = expenseCategoryId;
-        CreatedOn = DateTime.Now;
-        IsActive = true;
+        // Relación con ExpenseCategory
+        public int ExpenseCategoryId { get; set; }
+        public ExpenseCategory ExpenseCategory { get; set; }
+
+        // Relación con Contributions
+        public ICollection<Contribution> Contributions { get; set; } = new List<Contribution>();
+
+        // Constructor sin parámetros requerido por EF Core
+        public Expense() { }
+
+        // Constructores con parámetros
+        public Expense(string name, decimal amount, int memberId, int expenseCategoryId)
+        {
+            Name = name ?? throw new ArgumentNullException(nameof(name), "Name es obligatorio.");
+            if (amount <= 0)
+                throw new ArgumentOutOfRangeException(nameof(amount), "Amount debe ser mayor que cero.");
+            Amount = amount;
+            MemberId = memberId;
+            ExpenseCategoryId = expenseCategoryId;
+        }
     }
 }

@@ -1,52 +1,38 @@
-﻿namespace FamilyFinances.Domain.Entities;
+﻿using FamilyFinances.Domain.Constants;
+using FamilyFinances.Domain.Entities;
+
+namespace FamilyFinances.Domain.Entities;
 
 public class SavingsBag
 {
-    public int SavingBagId { get; set; }
+
+    public int SavingsBagId { get; set; }
     public string Name { get; set; }
-    public DateTime StartDate { get; set; }
+    public DateTime StartDate { get; set; } = DateTime.Now;
     public DateTime? EndDate { get; set; }
     public decimal IdealAmount { get; set; }
     public string Purpose { get; set; }
-    public string Status { get; set; }
-    public DateTime CreationDate { get; set; }
-    public bool IsActive { get; set; }
+    public StatusTypeEnum Status { get; set; } = StatusTypeEnum.Pending;
+    public DateTime CreationDate { get; set; } = DateTime.Now;
+    public bool IsActive { get; set; } = true;
 
-    // Relación con Family: Muchas bolsas de ahorro pueden pertenecer a una familia
+    // Relación con Family
     public int FamilyId { get; set; }
     public Family Family { get; set; }
 
-    // Relación con Contributions: Una bolsa de ahorro puede tener muchas contribuciones
+    // Relación con Contributions
     public ICollection<Contribution> Contributions { get; set; } = new List<Contribution>();
 
-    // Constructor por defecto
+    // Constructor sin parámetros requerido por EF Core
     public SavingsBag() { }
 
-    // Constructor completo
-    public SavingsBag(int savingBagId, string name, DateTime startDate, DateTime? endDate, decimal idealAmount, string purpose, string status, DateTime creationDate, bool isActive, int familyId)
+    // Constructores con parámetros
+    public SavingsBag(string name, int familyId, decimal idealAmount)
     {
-        SavingBagId = savingBagId;
-        Name = name;
-        StartDate = startDate;
-        EndDate = endDate;
-        IdealAmount = idealAmount;
-        Purpose = purpose;
-        Status = status;
-        CreationDate = creationDate;
-        IsActive = isActive;
+        Name = name ?? throw new ArgumentNullException(nameof(name), "Name es obligatorio.");
         FamilyId = familyId;
-    }
-
-    // Constructor sin SavingBagId y CreationDate
-    public SavingsBag(string name, DateTime startDate, decimal idealAmount, string purpose, string status, int familyId)
-    {
-        Name = name;
-        StartDate = startDate;
+        if (idealAmount <= 0)
+            throw new ArgumentOutOfRangeException(nameof(idealAmount), "IdealAmount debe ser mayor que cero.");
         IdealAmount = idealAmount;
-        Purpose = purpose;
-        Status = status;
-        FamilyId = familyId;
-        CreationDate = DateTime.Now;
-        IsActive = true;
     }
 }
